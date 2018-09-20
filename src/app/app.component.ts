@@ -226,7 +226,6 @@ export class AppComponent {
   }
 
   handleDragStart(event, node) {
-    this.treeControl.collapse(node);
     this.dragNode = node;
   }
 
@@ -248,8 +247,10 @@ export class AppComponent {
 
   handleDrop(event, node) {
     event.preventDefault();
-    this.database.insertItem(this.flatNodeMap.get(node), this.dragNode.item);
-    this.database.deleteItem(this.flatNodeMap.get(this.dragNode));
-    this.treeControl.expand(node);
+    if (node !== this.dragNode) {
+      this.database.insertItem(this.flatNodeMap.get(node), this.dragNode.item);
+      this.database.deleteItem(this.flatNodeMap.get(this.dragNode));
+      this.treeControl.expand(node);
+    }
   }
 }

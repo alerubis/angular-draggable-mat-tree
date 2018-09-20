@@ -4,12 +4,17 @@
                  matTreeNodePadding
                  draggable="true"
                  (dragstart)="handleDragStart($event, node)"
-                 (dragover)="handleDragOver($event, node)"
-                 (drop)="handleDrop($event, node)">
+                 (dragover)="handleDragOver($event, node);"
+                 (drop)="handleDrop($event, node)"
+                 (dragenter)="tooltip.show()">
     <button mat-icon-button disabled></button>
     <mat-checkbox class="checklist-leaf-node"
                   [checked]="checklistSelection.isSelected(node)"
-                  (change)="checklistSelection.toggle(node);">{{node.item}}</mat-checkbox>
+                  (change)="checklistSelection.toggle(node);"
+                  #tooltip="matTooltip"
+                  [matTooltipDisabled]="node !== dragNodeExpandOverNode"
+                  [matTooltip]="'Move to \'' + node.item + '\''"
+                  matTooltipPosition="above">{{node.item}}</mat-checkbox>
   </mat-tree-node>
 
   <mat-tree-node *matTreeNodeDef="let node; when: hasNoContent" matTreeNodePadding>
@@ -23,7 +28,8 @@
   <mat-tree-node *matTreeNodeDef="let node; when: hasChild"
                  matTreeNodePadding
                  (dragover)="handleDragOver($event, node)"
-                 (drop)="handleDrop($event, node)">
+                 (drop)="handleDrop($event, node)"
+                 (dragenter)="tooltip.show()">
     <button mat-icon-button matTreeNodeToggle
             [attr.aria-label]="'toggle ' + node.filename">
       <mat-icon class="mat-icon-rtl-mirror">
@@ -32,7 +38,11 @@
     </button>
     <mat-checkbox [checked]="descendantsAllSelected(node)"
                   [indeterminate]="descendantsPartiallySelected(node)"
-                  (change)="todoItemSelectionToggle(node)">{{node.item}}</mat-checkbox>
+                  (change)="todoItemSelectionToggle(node)"
+                  #tooltip="matTooltip"
+                  [matTooltipDisabled]="node !== dragNodeExpandOverNode"
+                  [matTooltip]="'Move to \'' + node.item + '\''"
+                  matTooltipPosition="above">{{node.item}}</mat-checkbox>
     <button mat-icon-button (click)="addNewItem(node)"><mat-icon>add</mat-icon></button>
   </mat-tree-node>
 </mat-tree>
