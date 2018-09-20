@@ -99,6 +99,24 @@ export class ChecklistDatabase {
     node.item = name;
     this.dataChange.next(this.data);
   }
+
+  deleteItem(node: TodoItemNode) {
+    this.deleteNode(this.data, node);
+    this.dataChange.next(this.data);
+  }
+
+  deleteNode(nodes: TodoItemNode[], nodeToDelete: TodoItemNode) {
+    const index = nodes.indexOf(nodeToDelete, 0);
+    if (index > -1) {
+      nodes.splice(index, 1);
+    } else {
+      nodes.forEach(node => {
+        if (node.children && node.children.length > 0) {
+          this.deleteNode(node.children, nodeToDelete);
+        }
+      });
+    }
+  }
 }
 
 @Component({
@@ -166,7 +184,7 @@ export class AppComponent {
       : new TodoItemFlatNode();
     flatNode.item = node.item;
     flatNode.level = level;
-    flatNode.expandable = !!node.children;
+    flatNode.expandable = (node.children && node.children.length > 0);
     this.flatNodeMap.set(flatNode, node);
     this.nestedNodeMap.set(node, flatNode);
     return flatNode;
@@ -231,6 +249,7 @@ export class AppComponent {
   handleDrop(event, node) {
     event.preventDefault();
     this.database.insertItem(this.flatNodeMap.get(node), this.dragNode.item);
+    this.database.deleteItem(this.flatNodeMap.get(this.dragNode));
     this.treeControl.expand(node);
   }
 }

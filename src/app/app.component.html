@@ -22,8 +22,6 @@
 
   <mat-tree-node *matTreeNodeDef="let node; when: hasChild"
                  matTreeNodePadding
-                 draggable="true"
-                 (dragstart)="handleDragStart($event, node)"
                  (dragover)="handleDragOver($event, node)"
                  (drop)="handleDrop($event, node)">
     <button mat-icon-button matTreeNodeToggle
