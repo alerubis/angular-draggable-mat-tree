@@ -107,13 +107,14 @@ export class ChecklistDatabase {
     this.dataChange.next(this.data);
   }
 
-  copyPasteItem(from: TodoItemNode, to: TodoItemNode) {
+  copyPasteItem(from: TodoItemNode, to: TodoItemNode): TodoItemNode {
     const newItem = this.insertItem(to, from.item);
     if (from.children) {
       from.children.forEach(child => {
         this.copyPasteItem(child, newItem);
       });
     }
+    return newItem;
   }
 
   deleteNode(nodes: TodoItemNode[], nodeToDelete: TodoItemNode) {
@@ -262,9 +263,9 @@ export class AppComponent {
   handleDrop(event, node) {
     event.preventDefault();
     if (node !== this.dragNode) {
-      this.database.copyPasteItem(this.flatNodeMap.get(this.dragNode), this.flatNodeMap.get(node));
+      const newItem = this.database.copyPasteItem(this.flatNodeMap.get(this.dragNode), this.flatNodeMap.get(node));
       this.database.deleteItem(this.flatNodeMap.get(this.dragNode));
-      this.treeControl.expand(node);
+      this.treeControl.expandDescendants(this.nestedNodeMap.get(newItem));
     }
   }
 }
