@@ -1,5 +1,7 @@
 # DraggableMatTree
 
+![](http://www.alessiorubis.it/angular-draggable-mat-tree.gif)
+
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 6.0.8.
 
 ## Development server
