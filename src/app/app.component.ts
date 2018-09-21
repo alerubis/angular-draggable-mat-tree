@@ -87,12 +87,14 @@ export class ChecklistDatabase {
   }
 
   /** Add an item to to-do list */
-  insertItem(parent: TodoItemNode, name: string) {
+  insertItem(parent: TodoItemNode, name: string): TodoItemNode {
     if (!parent.children) {
       parent.children = [];
     }
-    parent.children.push({ item: name } as TodoItemNode);
+    const newItem = { item: name } as TodoItemNode;
+    parent.children.push(newItem);
     this.dataChange.next(this.data);
+    return newItem;
   }
 
   updateItem(node: TodoItemNode, name: string) {
@@ -103,6 +105,15 @@ export class ChecklistDatabase {
   deleteItem(node: TodoItemNode) {
     this.deleteNode(this.data, node);
     this.dataChange.next(this.data);
+  }
+
+  copyPasteItem(from: TodoItemNode, to: TodoItemNode) {
+    const newItem = this.insertItem(to, from.item);
+    if (from.children) {
+      from.children.forEach(child => {
+        this.copyPasteItem(child, newItem);
+      });
+    }
   }
 
   deleteNode(nodes: TodoItemNode[], nodeToDelete: TodoItemNode) {
@@ -229,6 +240,7 @@ export class AppComponent {
     // Required by Firefox (https://stackoverflow.com/questions/19055264/why-doesnt-html5-drag-and-drop-work-in-firefox)
     event.dataTransfer.setData('foo', 'bar');
     this.dragNode = node;
+    this.treeControl.collapse(node);
   }
 
   handleDragOver(event, node) {
@@ -250,7 +262,7 @@ export class AppComponent {
   handleDrop(event, node) {
     event.preventDefault();
     if (node !== this.dragNode) {
-      this.database.insertItem(this.flatNodeMap.get(node), this.dragNode.item);
+      this.database.copyPasteItem(this.flatNodeMap.get(this.dragNode), this.flatNodeMap.get(node));
       this.database.deleteItem(this.flatNodeMap.get(this.dragNode));
       this.treeControl.expand(node);
     }
