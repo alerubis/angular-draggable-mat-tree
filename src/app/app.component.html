@@ -25,22 +25,22 @@
   </mat-tree-node>
 
   <mat-tree-node *matTreeNodeDef="let node; when: hasChild"
-                 matTreeNodePadding
-                 [ngClass]="{'drop-above': dragNodeExpandOverArea === 'above' && dragNodeExpandOverNode === node,
-                             'drop-below': dragNodeExpandOverArea === 'below' && dragNodeExpandOverNode === node,
-                             'drop-center': dragNodeExpandOverArea === 'center' && dragNodeExpandOverNode === node}"
-                 draggable="true"
-                 (dragstart)="handleDragStart($event, node);"
-                 (dragover)="handleDragOver($event, node);"
-                 (drop)="handleDrop($event, node);"
-                 (dragend)="handleDragEnd($event);">
+                 matTreeNodePadding>
     <button mat-icon-button matTreeNodeToggle
             [attr.aria-label]="'toggle ' + node.filename">
       <mat-icon class="mat-icon-rtl-mirror">
         {{treeControl.isExpanded(node) ? 'expand_more' : 'chevron_right'}}
       </mat-icon>
     </button>
-    <mat-checkbox [checked]="descendantsAllSelected(node)"
+    <mat-checkbox [ngClass]="{'drop-above': dragNodeExpandOverArea === 'above' && dragNodeExpandOverNode === node,
+                              'drop-below': dragNodeExpandOverArea === 'below' && dragNodeExpandOverNode === node,
+                              'drop-center': dragNodeExpandOverArea === 'center' && dragNodeExpandOverNode === node}"
+                  draggable="true"
+                  (dragstart)="handleDragStart($event, node);"
+                  (dragover)="handleDragOver($event, node);"
+                  (drop)="handleDrop($event, node);"
+                  (dragend)="handleDragEnd($event);"
+                  [checked]="descendantsAllSelected(node)"
                   [indeterminate]="descendantsPartiallySelected(node)"
                   (change)="todoItemSelectionToggle(node)">{{node.item}}</mat-checkbox>
     <button mat-icon-button (click)="addNewItem(node)"><mat-icon>add</mat-icon></button>
