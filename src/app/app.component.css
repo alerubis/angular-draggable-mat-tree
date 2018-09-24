@@ -5,13 +5,15 @@
 }
 
 .drop-above {
-  border-top: 1px solid black;
+  border-top: 10px solid #dddddd;
+  margin-top: -10px;
 }
 
 .drop-below {
-  border-bottom: 1px solid black;
+  border-bottom: 10px solid #dddddd;
+  margin-bottom: -10px;
 }
 
 .drop-center {
-  border-left: 1px solid black;
+  background-color: #dddddd;
 }
