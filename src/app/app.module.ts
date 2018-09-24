@@ -4,7 +4,7 @@ import { NgModule } from '@angular/core';
 
 import { AppComponent } from './app.component';
 
-import { MatButtonModule, MatCheckboxModule, MatFormFieldModule, MatIconModule, MatInputModule, MatTooltipModule, MatTreeModule } from '@angular/material';
+import { MatButtonModule, MatCheckboxModule, MatFormFieldModule, MatIconModule, MatInputModule, MatTreeModule } from '@angular/material';
 
 @NgModule({
   declarations: [
@@ -19,7 +19,6 @@ import { MatButtonModule, MatCheckboxModule, MatFormFieldModule, MatIconModule, 
     MatFormFieldModule,
     MatIconModule,
     MatInputModule,
-    MatTooltipModule,
     MatTreeModule
   ],
   providers: [],

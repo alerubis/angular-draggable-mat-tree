@@ -97,6 +97,58 @@ export class ChecklistDatabase {
     return newItem;
   }
 
+  insertItemAbove(node: TodoItemNode, name: string): TodoItemNode {
+    const parentNode = this.getParentFromNodes(node);
+    const newItem = { item: name } as TodoItemNode;
+    if (parentNode != null) {
+      parentNode.children.splice(parentNode.children.indexOf(node), 0, newItem);
+    } else {
+      this.data.splice(this.data.indexOf(node), 0, newItem);
+    }
+    this.dataChange.next(this.data);
+    return newItem;
+  }
+
+  insertItemBelow(node: TodoItemNode, name: string): TodoItemNode {
+    const parentNode = this.getParentFromNodes(node);
+    const newItem = { item: name } as TodoItemNode;
+    if (parentNode != null) {
+      parentNode.children.splice(parentNode.children.indexOf(node) + 1, 0, newItem);
+    } else {
+      this.data.splice(this.data.indexOf(node) + 1, 0, newItem);
+    }
+    this.dataChange.next(this.data);
+    return newItem;
+  }
+
+  getParentFromNodes(node: TodoItemNode): TodoItemNode {
+    for (let i = 0; i < this.data.length; ++ i) {
+      const currentRoot = this.data[i];
+      const parent = this.getParent(currentRoot, node);
+      if (parent != null) {
+        return parent;
+      }
+    }
+    return null;
+  }
+
+  getParent(currentRoot: TodoItemNode, node: TodoItemNode): TodoItemNode {
+    if (currentRoot.children && currentRoot.children.length > 0) {
+      for (let i = 0; i < currentRoot.children.length; ++ i) {
+        const child = currentRoot.children[i];
+        if (child === node) {
+          return currentRoot;
+        } else if (child.children && child.children.length > 0) {
+          const parent = this.getParent(child, node);
+          if (parent != null) {
+            return parent;
+          }
+        }
+      }
+    }
+    return null;
+  }
+
   updateItem(node: TodoItemNode, name: string) {
     node.item = name;
     this.dataChange.next(this.data);
@@ -109,6 +161,26 @@ export class ChecklistDatabase {
 
   copyPasteItem(from: TodoItemNode, to: TodoItemNode): TodoItemNode {
     const newItem = this.insertItem(to, from.item);
+    if (from.children) {
+      from.children.forEach(child => {
+        this.copyPasteItem(child, newItem);
+      });
+    }
+    return newItem;
+  }
+
+  copyPasteItemAbove(from: TodoItemNode, to: TodoItemNode): TodoItemNode {
+    const newItem = this.insertItemAbove(to, from.item);
+    if (from.children) {
+      from.children.forEach(child => {
+        this.copyPasteItem(child, newItem);
+      });
+    }
+    return newItem;
+  }
+
+  copyPasteItemBelow(from: TodoItemNode, to: TodoItemNode): TodoItemNode {
+    const newItem = this.insertItemBelow(to, from.item);
     if (from.children) {
       from.children.forEach(child => {
         this.copyPasteItem(child, newItem);
@@ -267,5 +339,46 @@ export class AppComponent {
       this.database.deleteItem(this.flatNodeMap.get(this.dragNode));
       this.treeControl.expandDescendants(this.nestedNodeMap.get(newItem));
     }
+    this.dragNode = null;
+    this.dragNodeExpandOverNode = null;
+    this.dragNodeExpandOverTime = 0;
+  }
+
+  handleDragEnd(event) {
+    this.dragNode = null;
+    this.dragNodeExpandOverNode = null;
+    this.dragNodeExpandOverTime = 0;
+  }
+
+  handleDragOver_above(event, node) {
+    event.preventDefault();
+  }
+
+  handleDrop_above(event, node) {
+    event.preventDefault();
+    if (node !== this.dragNode) {
+      const newItem = this.database.copyPasteItemAbove(this.flatNodeMap.get(this.dragNode), this.flatNodeMap.get(node));
+      this.database.deleteItem(this.flatNodeMap.get(this.dragNode));
+      this.treeControl.expandDescendants(this.nestedNodeMap.get(newItem));
+    }
+    this.dragNode = null;
+    this.dragNodeExpandOverNode = null;
+    this.dragNodeExpandOverTime = 0;
+  }
+
+  handleDragOver_below(event, node) {
+    event.preventDefault();
+  }
+
+  handleDrop_below(event, node) {
+    event.preventDefault();
+    if (node !== this.dragNode) {
+      const newItem = this.database.copyPasteItemBelow(this.flatNodeMap.get(this.dragNode), this.flatNodeMap.get(node));
+      this.database.deleteItem(this.flatNodeMap.get(this.dragNode));
+      this.treeControl.expandDescendants(this.nestedNodeMap.get(newItem));
+    }
+    this.dragNode = null;
+    this.dragNodeExpandOverNode = null;
+    this.dragNodeExpandOverTime = 0;
   }
 }
