@@ -3,3 +3,15 @@
   height: 20px;
   border: 1px dashed black;
 }
+
+.drop-above {
+  border-top: 1px solid black;
+}
+
+.drop-below {
+  border-bottom: 1px solid black;
+}
+
+.drop-center {
+  border-left: 1px solid black;
+}

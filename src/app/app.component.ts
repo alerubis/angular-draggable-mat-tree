@@ -236,6 +236,7 @@ export class AppComponent {
   dragNodeExpandOverWaitTimeMs = 300;
   dragNodeExpandOverNode: any;
   dragNodeExpandOverTime: number;
+  dragNodeExpandOverArea: string;
 
   constructor(private database: ChecklistDatabase) {
     this.treeFlattener = new MatTreeFlattener(this.transformer, this.getLevel, this.isExpandable, this.getChildren);
@@ -330,12 +331,30 @@ export class AppComponent {
       this.dragNodeExpandOverNode = node;
       this.dragNodeExpandOverTime = new Date().getTime();
     }
+
+    // Handle drag area
+    const percentageX = event.offsetX / event.target.clientWidth;
+    const percentageY = event.offsetY / event.target.clientHeight;
+    if (percentageY < 0.25) {
+      this.dragNodeExpandOverArea = 'above';
+    } else if (percentageY > 0.75) {
+      this.dragNodeExpandOverArea = 'below';
+    } else {
+      this.dragNodeExpandOverArea = 'center';
+    }
   }
 
   handleDrop(event, node) {
     event.preventDefault();
     if (node !== this.dragNode) {
-      const newItem = this.database.copyPasteItem(this.flatNodeMap.get(this.dragNode), this.flatNodeMap.get(node));
+      let newItem: TodoItemNode;
+      if (this.dragNodeExpandOverArea === 'above') {
+        newItem = this.database.copyPasteItemAbove(this.flatNodeMap.get(this.dragNode), this.flatNodeMap.get(node));
+      } else if (this.dragNodeExpandOverArea === 'below') {
+        newItem = this.database.copyPasteItemBelow(this.flatNodeMap.get(this.dragNode), this.flatNodeMap.get(node));
+      } else {
+        newItem = this.database.copyPasteItem(this.flatNodeMap.get(this.dragNode), this.flatNodeMap.get(node));
+      }
       this.database.deleteItem(this.flatNodeMap.get(this.dragNode));
       this.treeControl.expandDescendants(this.nestedNodeMap.get(newItem));
     }
@@ -345,38 +364,6 @@ export class AppComponent {
   }
 
   handleDragEnd(event) {
-    this.dragNode = null;
-    this.dragNodeExpandOverNode = null;
-    this.dragNodeExpandOverTime = 0;
-  }
-
-  handleDragOver_above(event, node) {
-    event.preventDefault();
-  }
-
-  handleDrop_above(event, node) {
-    event.preventDefault();
-    if (node !== this.dragNode) {
-      const newItem = this.database.copyPasteItemAbove(this.flatNodeMap.get(this.dragNode), this.flatNodeMap.get(node));
-      this.database.deleteItem(this.flatNodeMap.get(this.dragNode));
-      this.treeControl.expandDescendants(this.nestedNodeMap.get(newItem));
-    }
-    this.dragNode = null;
-    this.dragNodeExpandOverNode = null;
-    this.dragNodeExpandOverTime = 0;
-  }
-
-  handleDragOver_below(event, node) {
-    event.preventDefault();
-  }
-
-  handleDrop_below(event, node) {
-    event.preventDefault();
-    if (node !== this.dragNode) {
-      const newItem = this.database.copyPasteItemBelow(this.flatNodeMap.get(this.dragNode), this.flatNodeMap.get(node));
-      this.database.deleteItem(this.flatNodeMap.get(this.dragNode));
-      this.treeControl.expandDescendants(this.nestedNodeMap.get(newItem));
-    }
     this.dragNode = null;
     this.dragNodeExpandOverNode = null;
     this.dragNodeExpandOverTime = 0;
