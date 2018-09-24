@@ -1,6 +1,6 @@
 import { SelectionModel } from '@angular/cdk/collections';
 import { FlatTreeControl } from '@angular/cdk/tree';
-import { Component, Injectable } from '@angular/core';
+import { Component, Injectable, ElementRef, ViewChild } from '@angular/core';
 import { MatTreeFlatDataSource, MatTreeFlattener } from '@angular/material/tree';
 import { BehaviorSubject } from 'rxjs';
 
@@ -237,6 +237,7 @@ export class AppComponent {
   dragNodeExpandOverNode: any;
   dragNodeExpandOverTime: number;
   dragNodeExpandOverArea: string;
+  @ViewChild('emptyItem') emptyItem: ElementRef;
 
   constructor(private database: ChecklistDatabase) {
     this.treeFlattener = new MatTreeFlattener(this.transformer, this.getLevel, this.isExpandable, this.getChildren);
@@ -313,6 +314,7 @@ export class AppComponent {
   handleDragStart(event, node) {
     // Required by Firefox (https://stackoverflow.com/questions/19055264/why-doesnt-html5-drag-and-drop-work-in-firefox)
     event.dataTransfer.setData('foo', 'bar');
+    event.dataTransfer.setDragImage(this.emptyItem.nativeElement, 0, 0);
     this.dragNode = node;
     this.treeControl.collapse(node);
   }
