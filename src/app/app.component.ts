@@ -122,7 +122,7 @@ export class ChecklistDatabase {
   }
 
   getParentFromNodes(node: TodoItemNode): TodoItemNode {
-    for (let i = 0; i < this.data.length; ++ i) {
+    for (let i = 0; i < this.data.length; ++i) {
       const currentRoot = this.data[i];
       const parent = this.getParent(currentRoot, node);
       if (parent != null) {
@@ -134,7 +134,7 @@ export class ChecklistDatabase {
 
   getParent(currentRoot: TodoItemNode, node: TodoItemNode): TodoItemNode {
     if (currentRoot.children && currentRoot.children.length > 0) {
-      for (let i = 0; i < currentRoot.children.length; ++ i) {
+      for (let i = 0; i < currentRoot.children.length; ++i) {
         const child = currentRoot.children[i];
         if (child === node) {
           return currentRoot;

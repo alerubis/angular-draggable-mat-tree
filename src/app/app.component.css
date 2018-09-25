@@ -1,16 +1,10 @@
-.drop-area {
-  width: 100%;
-  height: 20px;
-  border: 1px dashed black;
-}
-
 .drop-above {
-  border-top: 10px solid #dddddd;
+  border-top: 10px dotted #dddddd;
   margin-top: -10px;
 }
 
 .drop-below {
-  border-bottom: 10px solid #dddddd;
+  border-bottom: 10px dotted #dddddd;
   margin-bottom: -10px;
 }
 
