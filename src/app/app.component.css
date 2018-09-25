@@ -1,10 +1,10 @@
 .drop-above {
-  border-top: 10px dotted #dddddd;
+  border-top: 10px solid #dddddd;
   margin-top: -10px;
 }
 
 .drop-below {
-  border-bottom: 10px dotted #dddddd;
+  border-bottom: 10px solid #dddddd;
   margin-bottom: -10px;
 }
 
